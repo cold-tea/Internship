@@ -1,0 +1,73 @@
+$('.carousel').carousel({
+  interval: 2000
+});
+
+
+
+$('#courses_list').on('change', function() {
+	console.log($('#courses_list option:selected').text());
+	text = $('#courses_list option:selected').text();
+	input = jQuery('<div class="form-group"><label for="some">Enter the price</label>'+
+			'<input required type="number" class="form-control" placeholder="Provide Course Completion Price" /></div>');
+	$('#our-div').append(input);
+});
+
+var $table = $('#listStudent');
+if($table.length) {
+	var jsonUrl = window.context + '/student/list/json';
+	$table.DataTable({
+		lengthMenu: [[10, 15, 20, -1], ['10 Records', '15 Records', '20 Records', 'ALL Records']],
+		ajax: {
+			url: jsonUrl,
+			dataSrc: ''
+		},
+		columns: [
+			{
+				data: 'id'
+			},
+			{
+				data: 'fName'
+			},
+			{
+				data: 'lName'
+			},
+			{
+				data: 'gender',
+				mRender: function(data, type, row) {
+					return data[0].toUpperCase() + data.substr(1);
+				}
+			},
+			{
+				data: 'courses',
+				mRender: function(data, type, row) {
+					var final = '<select class="form-control">';
+					for(var i = 0; i< data.length; i++) {
+						final += '<option>'+data[i].name+'</option>';
+					}
+					final += '</select>';
+					return final;
+				}
+			},
+			{
+				data: 'present',
+				mRender: function(data, type, row) {
+					var append;
+					if(data === true) {
+						append = '<span style="margin-left:20px" class="badge badge-pill badge-dark">Present</span>';
+						append += '<a href="'+window.context+'/attendance/absent/'+row.id+'" style="float:right;margin-right:5px;" class="btn btn-sm btn-outline-danger">Absent</a>';
+					} else if (data === false) {
+						append = '<span style="margin-left:20px" class="badge badge-pill badge-warning">Absent</span>';
+						append += '<button custom="'+row.fName+' '+row.lName+'" onclick="someMethod(event)" style="float:right;margin-right:5px;" type="button" id="'+row.id+'" class="some-trigger btn btn-outline-info btn-sm" data-toggle="modal" data-target="#exampleModal">Present</button>'; 
+					}
+					return '<a href="'+window.context+'/student/remove/'+row.id+'" class="btn btn-sm btn-danger">Delete</a> ' +
+							'<a href="'+window.context+'/student/update/'+row.id+'" class="btn btn-sm btn-success">Update</a>' +
+							append;	
+				}
+			}
+		]
+	});
+}
+
+
+
+
